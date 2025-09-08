@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Track, SocialLink, Blockchain } from './types';
 import { SpotifyIcon, InstagramIcon, XIcon, YoutubeIcon, BitcoinIcon, EthereumIcon, SolanaIcon, TronIcon } from './components/Icons';
 

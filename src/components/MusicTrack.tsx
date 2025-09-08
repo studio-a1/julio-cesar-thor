@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
+import { useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
 import type { Track } from '../types';
 import { PlayIcon, PauseIcon } from './Icons';
 
