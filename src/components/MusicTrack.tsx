@@ -103,16 +103,20 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
       </div>
       
       <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto">
-        <audio 
-          ref={audioRef} 
-          src={track.audioSrc} 
-          preload="metadata"
-          onEnded={handleAudioEnded}
-        ></audio>
+        {track.audioSrc && (
+          <>
+            <audio 
+              ref={audioRef} 
+              src={track.audioSrc} 
+              preload="metadata"
+              onEnded={handleAudioEnded}
+            ></audio>
 
-        <button onClick={togglePlay} className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors" aria-label={isPlaying ? `Pausar ${track.title}` : `Tocar ${track.title}`}>
-          {isPlaying ? <PauseIcon /> : <PlayIcon />}
-        </button>
+            <button onClick={togglePlay} className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors" aria-label={isPlaying ? `Pausar ${track.title}` : `Tocar ${track.title}`}>
+              {isPlaying ? <PauseIcon /> : <PlayIcon />}
+            </button>
+          </>
+        )}
         
         <button
           onClick={() => onBuyClick(track)}
