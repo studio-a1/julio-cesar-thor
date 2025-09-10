@@ -11,7 +11,9 @@ interface MusicTrackProps {
 }
 
 const PREVIEW_DURATION = 30; // seconds
-const FADE_OUT_START_TIME = 27; // seconds
+const FADE_IN_DURATION = 2;  // seconds
+const FADE_OUT_DURATION = 3; // seconds
+const FADE_OUT_START_TIME = PREVIEW_DURATION - FADE_OUT_DURATION;
 
 export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track, onBuyClick, isPlaying, onPlay, onPause }, ref) => {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -19,50 +21,47 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
   useImperativeHandle(ref, () => audioRef.current as HTMLAudioElement);
 
   const handleTimeUpdate = () => {
-    if (!audioRef.current) return;
+    const audio = audioRef.current;
+    if (!audio) return;
 
-    const currentTime = audioRef.current.currentTime;
+    const { currentTime } = audio;
 
-    // Stop playback if preview duration is reached
+    // Stop playback when the preview duration is reached
     if (currentTime >= PREVIEW_DURATION) {
-        audioRef.current.pause();
-        onPause(track.id);
-        // State is now "paused at the end", togglePlay will handle reset
-        return; 
+      audio.pause();
+      onPause(track.id);
+      return;
     }
 
-    // Fade out logic
-    if (currentTime >= FADE_OUT_START_TIME) {
-        const fadeDuration = PREVIEW_DURATION - FADE_OUT_START_TIME;
-        const timeIntoFade = currentTime - FADE_OUT_START_TIME;
-        const volume = Math.max(0, 1 - (timeIntoFade / fadeDuration));
-        audioRef.current.volume = volume;
-    } else {
-        // Ensure volume is 1 if we're before the fade time
-        if (audioRef.current.volume !== 1) {
-          audioRef.current.volume = 1;
-        }
+    let newVolume = 1;
+    // Fade in logic
+    if (currentTime < FADE_IN_DURATION) {
+      newVolume = currentTime / FADE_IN_DURATION;
     }
+    // Fade out logic
+    else if (currentTime > FADE_OUT_START_TIME) {
+      const timeIntoFade = currentTime - FADE_OUT_START_TIME;
+      newVolume = 1 - (timeIntoFade / FADE_OUT_DURATION);
+    }
+    
+    // Clamp volume between 0 and 1 to prevent errors
+    audio.volume = Math.max(0, Math.min(1, newVolume));
   };
-  
+
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio) {
-      if (isPlaying) {
-        audio.addEventListener('timeupdate', handleTimeUpdate);
-        // Ensure volume is reset when starting to play
-        if (audio.currentTime < FADE_OUT_START_TIME) {
-          audio.volume = 1;
-        }
-      } else {
-        audio.removeEventListener('timeupdate', handleTimeUpdate);
-      }
+    if (!audio) return;
+
+    // Attach or detach the timeupdate listener based on playback state
+    if (isPlaying) {
+      audio.addEventListener('timeupdate', handleTimeUpdate);
+    } else {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
     }
 
+    // Cleanup listener on component unmount
     return () => {
-      if (audio) {
-        audio.removeEventListener('timeupdate', handleTimeUpdate);
-      }
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
     };
   }, [isPlaying]);
 
@@ -74,12 +73,9 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
       audio.pause();
       onPause(track.id);
     } else {
-      // If paused at the end of the preview, reset to the beginning.
-      if (audio.currentTime >= PREVIEW_DURATION) {
-        audio.currentTime = 0;
-      }
-      // Ensure volume is always reset to 1 when a new play action is initiated.
-      audio.volume = 1;
+      // Per user request, any "play" action starts the preview from the beginning.
+      audio.currentTime = 0;
+      audio.volume = 0; // Start muted for the fade-in effect
       audio.play().catch(error => console.error("Error attempting to play audio:", error));
       onPlay(track.id);
     }
