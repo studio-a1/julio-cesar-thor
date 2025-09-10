@@ -1,4 +1,4 @@
-import { useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
+import React, { useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
 import type { Track } from '../types';
 import { PlayIcon, PauseIcon } from './Icons';
 
@@ -23,6 +23,14 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
 
     const currentTime = audioRef.current.currentTime;
 
+    // Stop playback if preview duration is reached
+    if (currentTime >= PREVIEW_DURATION) {
+        audioRef.current.pause();
+        onPause(track.id);
+        // State is now "paused at the end", togglePlay will handle reset
+        return; 
+    }
+
     // Fade out logic
     if (currentTime >= FADE_OUT_START_TIME) {
         const fadeDuration = PREVIEW_DURATION - FADE_OUT_START_TIME;
@@ -34,13 +42,6 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
         if (audioRef.current.volume !== 1) {
           audioRef.current.volume = 1;
         }
-    }
-
-    // Loop logic
-    if (currentTime >= PREVIEW_DURATION) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.volume = 1; // Reset volume on loop
-        // The browser's default behavior will continue playing after setting currentTime, so no need to call play() again.
     }
   };
   
@@ -55,8 +56,6 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
         }
       } else {
         audio.removeEventListener('timeupdate', handleTimeUpdate);
-        // Optionally reset volume when paused, though it will be reset on play anyway.
-        // audio.volume = 1; 
       }
     }
 
@@ -75,20 +74,14 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
       audio.pause();
       onPause(track.id);
     } else {
-      // Ensure we start from the beginning if the track ended or was stopped past the preview
+      // If paused at the end of the preview, reset to the beginning.
       if (audio.currentTime >= PREVIEW_DURATION) {
         audio.currentTime = 0;
       }
+      // Ensure volume is always reset to 1 when a new play action is initiated.
+      audio.volume = 1;
       audio.play().catch(error => console.error("Error attempting to play audio:", error));
       onPlay(track.id);
-    }
-  };
-  
-  const handleAudioEnded = () => {
-    // This will now only fire if the full audio source is less than 30s.
-    onPause(track.id);
-    if(audioRef.current) {
-        audioRef.current.currentTime = 0;
     }
   };
 
@@ -109,7 +102,6 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
               ref={audioRef} 
               src={track.audioSrc} 
               preload="metadata"
-              onEnded={handleAudioEnded}
             ></audio>
 
             <button onClick={togglePlay} className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors" aria-label={isPlaying ? `Pausar ${track.title}` : `Tocar ${track.title}`}>
