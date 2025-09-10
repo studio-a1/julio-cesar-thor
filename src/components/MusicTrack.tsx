@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef, useImperativeHandle, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import type { Track } from '../types';
 import { PlayIcon, PauseIcon } from './Icons';
 
@@ -15,71 +15,92 @@ const FADE_IN_DURATION = 2;  // seconds
 const FADE_OUT_DURATION = 3; // seconds
 const FADE_OUT_START_TIME = PREVIEW_DURATION - FADE_OUT_DURATION;
 
-export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track, onBuyClick, isPlaying, onPlay, onPause }, ref) => {
+export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPlaying, onPlay, onPause }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
+  // FIX: `useRef` was called without an initial value, causing an error. Initialized with null for type safety.
+  const animationFrameId = useRef<number | null>(null);
 
-  useImperativeHandle(ref, () => audioRef.current as HTMLAudioElement);
-
-  const handleTimeUpdate = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const { currentTime } = audio;
-
-    // Stop playback when the preview duration is reached
-    if (currentTime >= PREVIEW_DURATION) {
-      audio.pause();
+  const togglePlay = () => {
+    if (isPlaying) {
+      // Let the useEffect triggered by the prop change handle the pause.
       onPause(track.id);
-      return;
+    } else {
+      // IMPORTANT: .play() must be called in a user event handler for browser autoplay policies.
+      const audio = audioRef.current;
+      if (audio) {
+        audio.currentTime = 0;
+        audio.volume = 0; // Start muted for fade-in.
+        audio.play().catch(error => console.error("Audio playback failed:", error));
+      }
+      onPlay(track.id);
     }
-
-    let newVolume = 1;
-    // Fade in logic
-    if (currentTime < FADE_IN_DURATION) {
-      newVolume = currentTime / FADE_IN_DURATION;
-    }
-    // Fade out logic
-    else if (currentTime > FADE_OUT_START_TIME) {
-      const timeIntoFade = currentTime - FADE_OUT_START_TIME;
-      newVolume = 1 - (timeIntoFade / FADE_OUT_DURATION);
-    }
-    
-    // Clamp volume between 0 and 1 to prevent errors
-    audio.volume = Math.max(0, Math.min(1, newVolume));
   };
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
-
-    // Attach or detach the timeupdate listener based on playback state
-    if (isPlaying) {
-      audio.addEventListener('timeupdate', handleTimeUpdate);
-    } else {
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
+    if (animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
     }
 
-    // Cleanup listener on component unmount
+    if (!audio) return;
+
+    if (isPlaying) {
+      // The .play() call is in togglePlay. This effect manages the volume animation.
+      const runAnimation = () => {
+        if (!audioRef.current || audioRef.current.paused) {
+          return; // Stop animation if audio is paused.
+        }
+
+        const { currentTime } = audioRef.current;
+
+        if (currentTime >= PREVIEW_DURATION) {
+          audioRef.current.pause(); // Will trigger the 'pause' event listener.
+          return;
+        }
+
+        let newVolume = 1.0;
+        if (currentTime < FADE_IN_DURATION) {
+          newVolume = currentTime / FADE_IN_DURATION;
+        } else if (currentTime >= FADE_OUT_START_TIME) {
+          const timeIntoFade = currentTime - FADE_OUT_START_TIME;
+          newVolume = 1.0 - (timeIntoFade / FADE_OUT_DURATION);
+        }
+        
+        audioRef.current.volume = Math.max(0, Math.min(1, newVolume));
+        
+        animationFrameId.current = requestAnimationFrame(runAnimation);
+      };
+      animationFrameId.current = requestAnimationFrame(runAnimation);
+
+    } else {
+      // If the isPlaying prop is false, ensure the audio is paused.
+      audio.pause();
+    }
+
     return () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
     };
   }, [isPlaying]);
 
-  const togglePlay = () => {
+  // Sync parent state if audio pauses for any reason (e.g., end of preview)
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (isPlaying) {
-      audio.pause();
-      onPause(track.id);
-    } else {
-      // Per user request, any "play" action starts the preview from the beginning.
-      audio.currentTime = 0;
-      audio.volume = 0; // Start muted for the fade-in effect
-      audio.play().catch(error => console.error("Error attempting to play audio:", error));
-      onPlay(track.id);
-    }
-  };
+    const syncPauseState = () => {
+      if (isPlaying) {
+        onPause(track.id);
+      }
+    };
+    
+    audio.addEventListener('pause', syncPauseState);
+    
+    return () => {
+      audio.removeEventListener('pause', syncPauseState);
+    };
+  }, [isPlaying, onPause, track.id]);
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-black/20 rounded-lg hover:bg-black/40 transition-all duration-300 gap-4">
@@ -115,6 +136,4 @@ export const MusicTrack = forwardRef<HTMLAudioElement, MusicTrackProps>(({ track
       </div>
     </div>
   );
-});
-
-MusicTrack.displayName = 'MusicTrack';
+};
