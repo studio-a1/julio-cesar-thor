@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Track, SocialLink } from './types';
 import { SpotifyIcon, InstagramIcon, XIcon, YoutubeIcon } from './components/Icons';
 
@@ -12,7 +13,7 @@ export const TRACKS: Track[] = [
     artist: 'Julio César THOR',
     coverArt: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/cosmosonic-01.png',
     price: 0.99,
-    priceId: 'price_1PQRg5P9YqVb0f7Zxxxxxxxx', // Replace with your actual Price ID from Stripe
+    priceId: 'price_REPLACE_ME_1', // Replace with your actual Price ID from Stripe
   },
   {
     id: 'cosmosonic-02',
@@ -20,7 +21,7 @@ export const TRACKS: Track[] = [
     artist: 'Julio César THOR',
     coverArt: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/cosmosonic-02.png',
     price: 0.99,
-    priceId: 'price_1PQRhRP9YqVb0f7Zxxxxxxxx', // Replace with your actual Price ID from Stripe
+    priceId: 'price_REPLACE_ME_2', // Replace with your actual Price ID from Stripe
   },
   {
     id: 'cosmosonic-03',
@@ -28,7 +29,7 @@ export const TRACKS: Track[] = [
     artist: 'Julio César THOR',
     coverArt: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/cosmosonic-03.png',
     price: 0.99,
-    priceId: 'price_1PQRiAP9YqVb0f7Zxxxxxxxx', // Replace with your actual Price ID from Stripe
+    priceId: 'price_REPLACE_ME_3', // Replace with your actual Price ID from Stripe
   },
   {
     id: 'cosmosonic-04',
@@ -36,7 +37,7 @@ export const TRACKS: Track[] = [
     artist: 'Julio César THOR',
     coverArt: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/cosmosonic-04.png',
     price: 0.99,
-    priceId: 'price_1PQRijP9YqVb0f7Zxxxxxxxx', // Replace with your actual Price ID from Stripe
+    priceId: 'price_REPLACE_ME_4', // Replace with your actual Price ID from Stripe
   },
 ];
 
