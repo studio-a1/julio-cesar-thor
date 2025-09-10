@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { SocialLinks } from './components/SocialLinks';
 import { MusicTrack } from './components/MusicTrack';
 import { PurchaseModal } from './components/PurchaseModal';
@@ -13,14 +13,10 @@ const MainContent = () => {
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
-  const audioRefs = useRef<{[key: string]: HTMLAudioElement}>({});
 
   const handlePlay = useCallback((trackId: string) => {
-    if (playingTrackId && playingTrackId !== trackId) {
-      audioRefs.current[playingTrackId]?.pause();
-    }
     setPlayingTrackId(trackId);
-  }, [playingTrackId]);
+  }, []);
 
   const handlePause = useCallback((trackId: string) => {
     if (playingTrackId === trackId) {
@@ -66,7 +62,6 @@ const MainContent = () => {
                   isPlaying={playingTrackId === track.id}
                   onPlay={handlePlay}
                   onPause={handlePause}
-                  ref={el => { if (el) audioRefs.current[track.id] = el; }}
                 />
               ))}
             </div>
