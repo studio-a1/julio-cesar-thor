@@ -4,7 +4,7 @@ import { MusicTrack } from './components/MusicTrack';
 import { PurchaseModal } from './components/PurchaseModal';
 import { TRACKS, SOCIAL_LINKS } from './constants';
 import type { Track } from './types';
-import { SuccessPage } from './pages/SuccessPage';
+import { SuccessPage } from './SuccessPage';
 
 const openseaURL = 'https://opensea.io/collection/cosmosonic';
 const qrCodeAPIURL = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(openseaURL)}`;
