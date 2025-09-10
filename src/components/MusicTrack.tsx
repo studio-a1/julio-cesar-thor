@@ -17,19 +17,18 @@ const FADE_OUT_START_TIME = PREVIEW_DURATION - FADE_OUT_DURATION;
 
 export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPlaying, onPlay, onPause }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  // FIX: `useRef` was called without an initial value, causing an error. Initialized with null for type safety.
   const animationFrameId = useRef<number | null>(null);
 
   const togglePlay = () => {
     if (isPlaying) {
-      // Let the useEffect triggered by the prop change handle the pause.
       onPause(track.id);
     } else {
-      // IMPORTANT: .play() must be called in a user event handler for browser autoplay policies.
+      // .play() must be called in a user event handler for browser autoplay policies.
       const audio = audioRef.current;
       if (audio) {
         audio.currentTime = 0;
         audio.volume = 0; // Start muted for fade-in.
+        // The play promise can be ignored here as the useEffect will handle the state.
         audio.play().catch(error => console.error("Audio playback failed:", error));
       }
       onPlay(track.id);
@@ -38,6 +37,8 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
 
   useEffect(() => {
     const audio = audioRef.current;
+    
+    // Always clean up the animation frame from the previous render.
     if (animationFrameId.current) {
       cancelAnimationFrame(animationFrameId.current);
     }
@@ -47,14 +48,19 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
     if (isPlaying) {
       // The .play() call is in togglePlay. This effect manages the volume animation.
       const runAnimation = () => {
-        if (!audioRef.current || audioRef.current.paused) {
-          return; // Stop animation if audio is paused.
+        // The check for `audioRef.current.paused` was removed as it caused a race condition.
+        // The play() command is async. The animation frame could fire before the audio element's `paused`
+        // property was updated to `false`, causing the animation to terminate prematurely.
+        // The useEffect's cleanup function (which runs when `isPlaying` becomes false)
+        // is now the sole mechanism for stopping the animation loop.
+        if (!audioRef.current) {
+          return; // Stop animation if audio element is unmounted.
         }
 
         const { currentTime } = audioRef.current;
 
         if (currentTime >= PREVIEW_DURATION) {
-          audioRef.current.pause(); // Will trigger the 'pause' event listener.
+          audioRef.current.pause(); // This will trigger the 'pause' event listener, which calls onPause.
           return;
         }
 
@@ -74,6 +80,7 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
 
     } else {
       // If the isPlaying prop is false, ensure the audio is paused.
+      // This will also be triggered by the onPause call from the 'pause' event listener.
       audio.pause();
     }
 
@@ -91,6 +98,8 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
 
     const syncPauseState = () => {
       if (isPlaying) {
+        // If the audio pauses unexpectedly while it should be playing,
+        // update the parent component's state to reflect this.
         onPause(track.id);
       }
     };
