@@ -109,6 +109,7 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({ track, onClose }) 
           </button>
           {error && <p className="text-red-400 text-sm mt-4 text-center">{error}</p>}
            <p className="text-xs text-gray-500 mt-4 text-center">Powered by Coinbase Commerce</p>
+           <p className="text-xs text-gray-400 mt-2 text-center">Note: Crypto payments may take a few minutes to confirm on the blockchain.</p>
         </div>
       </div>
     </div>
