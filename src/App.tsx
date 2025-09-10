@@ -4,11 +4,12 @@ import { MusicTrack } from './components/MusicTrack';
 import { PurchaseModal } from './components/PurchaseModal';
 import { TRACKS, SOCIAL_LINKS } from './constants';
 import type { Track } from './types';
+import { SuccessPage } from './pages/SuccessPage';
 
 const openseaURL = 'https://opensea.io/collection/cosmosonic';
 const qrCodeAPIURL = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(openseaURL)}`;
 
-export default function App(): React.ReactElement {
+const MainContent = () => {
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
@@ -38,24 +39,7 @@ export default function App(): React.ReactElement {
   };
 
   return (
-    <div className="relative min-h-screen w-full font-sans text-white overflow-x-hidden">
-      {/* Background Video */}
-      <div className="absolute top-0 left-0 w-full h-full -z-10">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-          poster="https://picsum.photos/1920/1080?blur=5"
-        >
-          {/* Using a placeholder video */}
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-liquid-flowing-in-a-slow-motion-44129-large.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="absolute top-0 left-0 w-full h-full bg-black/60"></div>
-      </div>
-
+    <>
       {/* Main Content */}
       <main className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 sm:p-8">
         <div className="w-full max-w-4xl mx-auto">
@@ -120,6 +104,34 @@ export default function App(): React.ReactElement {
           onClose={handleCloseModal}
         />
       )}
+    </>
+  );
+}
+
+export default function App(): React.ReactElement {
+  // Use a regex to robustly check for the success path, handling issues like '//success'
+  const isSuccessPage = /^\/*success/.test(window.location.pathname);
+
+  return (
+    <div className="relative min-h-screen w-full font-sans text-white overflow-x-hidden">
+      {/* Background Video */}
+      <div className="absolute top-0 left-0 w-full h-full -z-10">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          poster="https://picsum.photos/1920/1080?blur=5"
+        >
+          {/* Using a placeholder video */}
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-liquid-flowing-in-a-slow-motion-44129-large.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute top-0 left-0 w-full h-full bg-black/60"></div>
+      </div>
+      
+      {isSuccessPage ? <SuccessPage /> : <MainContent />}
     </div>
   );
 }
