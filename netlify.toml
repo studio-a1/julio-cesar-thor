@@ -1,11 +1,9 @@
+code
+Toml
 [build]
-functions = "netlify/functions"
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
 
-command = "vite build"
-publish = "dist"
-
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
+[functions]
+  node_bundler = "esbuild"
