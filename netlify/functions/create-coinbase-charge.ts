@@ -20,8 +20,8 @@ const handler: Handler = async (event: HandlerEvent) => {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing required parameters.' }) };
     }
     
-    // Ensure the APP_URL is clean (no trailing slash)
-    const appUrl = process.env.APP_URL?.replace(/\/$/, '');
+    // Ensure the URL is clean (no trailing slash). Use the built-in Netlify URL variable.
+    const appUrl = process.env.URL?.replace(/\/$/, '');
 
     const chargeData = {
       name: trackName,
@@ -73,10 +73,6 @@ const handler: Handler = async (event: HandlerEvent) => {
 };
 
 export { handler };
-
-
-
-
 
 
 
