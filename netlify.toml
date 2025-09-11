@@ -1,7 +1,7 @@
 [build]
   command = "vite build"
   publish = "dist"
-  functions = "/netlify/functions"
+  functions = "./netlify/functions"
 
   [[redirects]]
 from = "./*"
