@@ -157,12 +157,3 @@ export const SuccessPage: React.FC = () => {
     </main>
   );
 };
-
-  return (
-    <main className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 sm:p-8">
-      <div className="w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 sm:p-12">
-        {renderContent()}
-      </div>
-    </main>
-  );
-};
