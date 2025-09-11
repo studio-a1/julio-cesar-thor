@@ -1,7 +1,12 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
+functions = "netlify/functions"
+command = "vite build"
+publish = "dist"
 
-[functions]
-  node_bundler = "esbuild"
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+  command = "npm run build"
+   node_bundler = "esbuild"
+[build]
