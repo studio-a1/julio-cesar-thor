@@ -105,7 +105,7 @@ const MainContent = () => {
 
 export default function App(): React.ReactElement {
   // Use a regex to robustly check for the success path, handling issues like '//success'
-  const isSuccessPage = /^\*/success/.test(window.location.pathname);
+  const isSuccessPage = /^\/*success/.test(window.location.pathname);
 
   return (
     <div className="relative min-h-screen w-full font-sans text-white overflow-x-hidden">
