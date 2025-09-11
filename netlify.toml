@@ -1,5 +1,3 @@
-code
-Toml
 [build]
   command = "npm run build"
   publish = "dist"
