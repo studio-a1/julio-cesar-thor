@@ -3,9 +3,3 @@
   publish = "dist"
   functions = "netlify/functions"
  
-
-  [[redirects]]
-  from = "/*"
-  to = "/"
-  status = 200
-
