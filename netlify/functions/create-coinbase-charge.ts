@@ -71,7 +71,7 @@ const handler: Handler = async (event: HandlerEvent) => {
 
 export { handler };
 
-/*import type { Handler, HandlerEvent } from '@netlify/functions';
+/* import type { Handler, HandlerEvent } from '@netlify/functions';
 
 // This is a placeholder for the actual Coinbase Commerce SDK/API call
 // In a real project, you would use a library like 'coinbase-commerce-node'
