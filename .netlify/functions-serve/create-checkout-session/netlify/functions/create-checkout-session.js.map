@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "sources": [],
-  "sourceRoot": "/tmp/user/1000/tmp-3570030-utFcQv7CQpRN",
-  "sourcesContent": [],
-  "mappings": "",
+  "sources": ["../../../../home/cesar/julio-cesar-thor/netlify/functions/create-checkout-session.ts"],
+  "sourceRoot": "/tmp/user/1000/tmp-3570030-RX33l0mzvw7z",
+  "sourcesContent": ["import type { Handler } from '@netlify/functions';\n\n// This function is currently unused but is given a valid handler\n// to prevent the Netlify dev server from crashing or entering a reload loop\n// due to an empty function file.\nconst handler: Handler = async () => {\n  return {\n    statusCode: 404,\n    body: JSON.stringify({ error: 'This function is not implemented.' }),\n  };\n};\n\nexport { handler };\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAKA,IAAM,UAAmB,YAAY;AACnC,SAAO;AAAA,IACL,YAAY;AAAA,IACZ,MAAM,KAAK,UAAU,EAAE,OAAO,oCAAoC,CAAC;AAAA,EACrE;AACF;",
   "names": []
 }
