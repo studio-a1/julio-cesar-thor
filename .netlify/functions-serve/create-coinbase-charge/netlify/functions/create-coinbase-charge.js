@@ -34,7 +34,6 @@ var handler = async (event) => {
     if (!trackName || !trackId || !price) {
       return { statusCode: 400, body: JSON.stringify({ error: "Missing required parameters." }) };
     }
-    const appUrl = process.env.URL?.replace(/\/$/, "");
     const chargeData = {
       name: trackName,
       description: `Purchase of the track: ${trackName}`,
@@ -47,8 +46,8 @@ var handler = async (event) => {
         trackId,
         trackName
       },
-      redirect_url: `${appUrl}/success`
-      // cancel_url: `${appUrl}/`, // Optional
+      redirect_url: `${process.env.APP_URL}/success`
+      // cancel_url: `${process.env.APP_URL}/`, // Optional
     };
     const response = await fetch(COINBASE_API_URL, {
       method: "POST",
