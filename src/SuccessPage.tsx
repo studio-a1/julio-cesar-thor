@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { SpinnerIcon, CheckCircleIcon, DownloadIcon } from './components/Icons';
 
@@ -13,6 +11,7 @@ export const SuccessPage: React.FC = () => {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [trackName, setTrackName] = useState<string>('your track');
   const [error, setError] = useState<string | null>(null);
+  const [pollCount, setPollCount] = useState(0);
 
   useEffect(() => {
     const chargeCode = localStorage.getItem('coinbase_charge_code');
@@ -22,22 +21,21 @@ export const SuccessPage: React.FC = () => {
       return;
     }
 
-    let attempts = 0;
-    // Use a ref to track if the component is still mounted
+    // Use a ref to track if the component is still mounted to prevent state updates on unmount
     const isMounted = { current: true };
 
-    const verifyPurchase = async () => {
+    const verifyPurchase = async (attempts: number) => {
       if (!isMounted.current) return;
 
-      if (attempts >= MAX_ATTEMPTS) {
+      setPollCount(attempts); // Update UI with current attempt number
+
+      if (attempts > MAX_ATTEMPTS) {
         setStatus('error');
         setError('Verification timed out. Blockchain confirmations can sometimes take longer. Please check your wallet for transaction status and contact support if payment was sent.');
         localStorage.removeItem('coinbase_charge_code');
         return;
       }
       
-      attempts++;
-
       try {
         const response = await fetch('/get-download-link', {
           method: 'POST',
@@ -49,7 +47,6 @@ export const SuccessPage: React.FC = () => {
         
         if (!isMounted.current) return;
 
-        // Handle non-successful responses first
         if (!response.ok && response.status !== 202) {
             let errorMessage = `Could not verify purchase. The server returned an unexpected response. Please try again later or contact support. (Status: ${response.status})`;
             try {
@@ -68,15 +65,14 @@ export const SuccessPage: React.FC = () => {
 
         if (response.status === 202) { // Pending
           setStatus('pending');
-          // continue polling
-          setTimeout(verifyPurchase, POLLING_INTERVAL);
+          // Schedule the next poll
+          setTimeout(() => verifyPurchase(attempts + 1), POLLING_INTERVAL);
         } else if (response.ok) { // Success
            setDownloadUrl(data.url);
            if(data.trackName) setTrackName(data.trackName);
            setStatus('success');
            localStorage.removeItem('coinbase_charge_code');
         } else {
-          // This case is a fallback, should be caught by the !response.ok check above
           throw new Error(data.error || 'Failed to verify purchase.');
         }
       } catch (err) {
@@ -87,13 +83,13 @@ export const SuccessPage: React.FC = () => {
       }
     };
 
-    verifyPurchase();
+    verifyPurchase(1); // Start polling with attempt 1
     
     // Cleanup function to prevent state updates on unmounted component
     return () => {
         isMounted.current = false;
     };
-  }, []);
+  }, []); // Run effect only once on mount
 
   const renderContent = () => {
     switch (status) {
@@ -106,12 +102,23 @@ export const SuccessPage: React.FC = () => {
           </div>
         );
       case 'pending':
-         return (
+        const elapsedSeconds = (pollCount - 1) * (POLLING_INTERVAL / 1000);
+        const totalSeconds = MAX_ATTEMPTS * (POLLING_INTERVAL / 1000);
+        const progress = Math.min((elapsedSeconds / totalSeconds) * 100, 100);
+
+        return (
           <div className="text-center">
             <SpinnerIcon />
             <h2 className="text-3xl font-bold mt-4">Waiting for Confirmation...</h2>
             <p className="text-gray-300 mt-2">Your payment has been detected. We are waiting for the transaction to be confirmed on the blockchain. This can take a few moments.</p>
-             <p className="text-gray-400 mt-2">Please keep this page open.</p>
+            <p className="text-gray-400 mt-2">Please keep this page open.</p>
+
+            <div className="w-full bg-gray-700 rounded-full h-2.5 mt-6">
+              <div className="bg-gradient-to-r from-orange-500 to-purple-500 h-2.5 rounded-full" style={{ width: `${progress}%`, transition: 'width 0.5s ease-in-out' }}></div>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Checking status... (Attempt {pollCount} of {MAX_ATTEMPTS})
+            </p>
           </div>
         );
       case 'success':
