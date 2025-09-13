@@ -53,6 +53,7 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
         accessKeyId: env.R2_ACCESS_KEY_ID,
         secretAccessKey: env.R2_SECRET_ACCESS_KEY,
       },
+      forcePathStyle: true, // Forces path-style URLs, e.g., endpoint/bucket/key
   });
 
   try {
