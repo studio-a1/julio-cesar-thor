@@ -61,9 +61,9 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
       return new Response(JSON.stringify({ error: 'Charge Code is required.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
-    // --- DEMO FLOW ---
+    // --- DEMO FLOW (For testing purposes) ---
     if (chargeCode === 'DEMO-SUCCESS') {
-        const objectKey = 'cosmosonic-01.mp3';
+        const objectKey = '1_Orion.mp3'; // Use a real filename for demo
         const command = new GetObjectCommand({
             Bucket: env.R2_BUCKET_NAME!,
             Key: objectKey,
@@ -94,14 +94,14 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
     const lastStatus = charge.timeline[charge.timeline.length - 1].status;
     
     if (lastStatus === 'COMPLETED') {
-        const trackId = charge.metadata?.trackId;
         const trackName = charge.metadata?.trackName;
+        const fileName = charge.metadata?.fileName; // Get the exact filename from metadata
 
-        if (!trackId) {
-            return new Response(JSON.stringify({ error: 'Could not determine which track was purchased.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        if (!fileName) {
+            return new Response(JSON.stringify({ error: 'Purchase verified, but could not determine which file to download.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
         }
 
-        const objectKey = `${trackId}.mp3`;
+        const objectKey = fileName; // Use the correct filename
         const command = new GetObjectCommand({
             Bucket: env.R2_BUCKET_NAME!,
             Key: objectKey,
@@ -126,3 +126,4 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
     });
   }
 };
+
