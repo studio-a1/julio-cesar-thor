@@ -1,11 +1,12 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { SpinnerIcon, CheckCircleIcon, DownloadIcon } from './components/Icons';
 
 type Status = 'verifying' | 'success' | 'error' | 'pending';
 
 const POLLING_INTERVAL = 5000; // 5 seconds
-const MAX_ATTEMPTS = 24; // 2 minutes max polling
+const MAX_ATTEMPTS = 120; // 10 minutes max polling (120 * 5s = 600s)
 
 export const SuccessPage: React.FC = () => {
   const [status, setStatus] = useState<Status>('verifying');
@@ -22,11 +23,15 @@ export const SuccessPage: React.FC = () => {
     }
 
     let attempts = 0;
+    // Use a ref to track if the component is still mounted
+    const isMounted = { current: true };
 
     const verifyPurchase = async () => {
+      if (!isMounted.current) return;
+
       if (attempts >= MAX_ATTEMPTS) {
         setStatus('error');
-        setError('Verification timed out. Please check your wallet for transaction status and contact support if payment was sent.');
+        setError('Verification timed out. Blockchain confirmations can sometimes take longer. Please check your wallet for transaction status and contact support if payment was sent.');
         localStorage.removeItem('coinbase_charge_code');
         return;
       }
@@ -42,23 +47,24 @@ export const SuccessPage: React.FC = () => {
           body: JSON.stringify({ chargeCode }),
         });
         
+        if (!isMounted.current) return;
+
         // Handle non-successful responses first
         if (!response.ok && response.status !== 202) {
             let errorMessage = `Could not verify purchase. The server returned an unexpected response. Please try again later or contact support. (Status: ${response.status})`;
             try {
-                // Try to parse a JSON error response from the server
                 const errorData = await response.json();
                 if (errorData.error) {
                     errorMessage = errorData.error;
                 }
             } catch (e) {
-                // The response was not JSON, so we use the generic error.
                 console.error("Could not parse error response as JSON.");
             }
             throw new Error(errorMessage);
         }
 
         const data = await response.json();
+        if (!isMounted.current) return;
 
         if (response.status === 202) { // Pending
           setStatus('pending');
@@ -74,6 +80,7 @@ export const SuccessPage: React.FC = () => {
           throw new Error(data.error || 'Failed to verify purchase.');
         }
       } catch (err) {
+        if (!isMounted.current) return;
         setStatus('error');
         setError(err instanceof Error ? err.message : 'An unknown error occurred.');
         localStorage.removeItem('coinbase_charge_code');
@@ -81,6 +88,11 @@ export const SuccessPage: React.FC = () => {
     };
 
     verifyPurchase();
+    
+    // Cleanup function to prevent state updates on unmounted component
+    return () => {
+        isMounted.current = false;
+    };
   }, []);
 
   const renderContent = () => {
@@ -143,4 +155,3 @@ export const SuccessPage: React.FC = () => {
     </main>
   );
 };
-
