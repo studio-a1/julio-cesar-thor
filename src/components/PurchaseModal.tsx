@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import type { Track } from '../types';
 import { CloseIcon, SpinnerIcon } from './Icons';
@@ -35,7 +37,7 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({ track, onClose }) 
     setIsProcessing(true);
     setError(null);
     try {
-      const response = await fetch('/.netlify/functions/create-coinbase-charge', {
+      const response = await fetch('/create-coinbase-charge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,12 +50,24 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({ track, onClose }) 
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create payment charge.');
+        let errorMessage = 'Failed to create payment charge.';
+        try {
+          // Try to get a specific error message from the server
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          } else {
+            errorMessage = `An unexpected error occurred. (Status: ${response.status})`;
+          }
+        } catch (e) {
+          // Response body is not JSON or is empty
+          errorMessage = `An unexpected server error occurred. Please try again later. (Status: ${response.status})`;
+        }
+        throw new Error(errorMessage);
       }
 
       const { hosted_url, code } = await response.json();
-      if (hosted_url) {
+      if (hosted_url && code) {
         // Store charge code to verify it on the success page
         localStorage.setItem('coinbase_charge_code', code);
         window.location.href = hosted_url;
@@ -115,3 +129,4 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({ track, onClose }) 
     </div>
   );
 };
+
