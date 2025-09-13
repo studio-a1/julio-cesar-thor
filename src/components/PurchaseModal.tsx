@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import type { Track } from '../types';
 import { CloseIcon, SpinnerIcon } from './Icons';
@@ -45,7 +44,8 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({ track, onClose }) 
         body: JSON.stringify({ 
           trackName: track.title, 
           trackId: track.id,
-          price: track.price.toString()
+          price: track.price.toString(),
+          fileName: track.fileName, // Pass the actual filename
         }),
       });
 
@@ -129,4 +129,3 @@ export const PurchaseModal: React.FC<PurchaseModalProps> = ({ track, onClose }) 
     </div>
   );
 };
-

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { SpinnerIcon, CheckCircleIcon, DownloadIcon } from './components/Icons';
 
 type Status = 'verifying' | 'success' | 'error' | 'pending';
@@ -12,26 +13,7 @@ export const SuccessPage: React.FC = () => {
   const [trackName, setTrackName] = useState<string>('your track');
   const [error, setError] = useState<string | null>(null);
 
-  const attempts = useRef(0);
-  const pollTimerId = useRef<number | null>(null);
-
-  // Using useCallback to create a stable function that won't be recreated on re-renders,
-  // preventing issues with stale closures in setTimeout.
-  const verifyPurchase = useCallback(async () => {
-    // Clear any existing timer to prevent parallel polling loops
-    if (pollTimerId.current) {
-        clearTimeout(pollTimerId.current);
-    }
-    
-    if (attempts.current >= MAX_ATTEMPTS) {
-      setStatus('error');
-      setError('Verification timed out. Please check your wallet for transaction status and contact support if payment was sent.');
-      localStorage.removeItem('coinbase_charge_code');
-      return;
-    }
-    
-    attempts.current++;
-
+  useEffect(() => {
     const chargeCode = localStorage.getItem('coinbase_charge_code');
     if (!chargeCode) {
       setStatus('error');
@@ -39,63 +21,67 @@ export const SuccessPage: React.FC = () => {
       return;
     }
 
-    try {
-      const response = await fetch('/.netlify/functions/get-download-link', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ chargeCode }),
-      });
-      
-      if (response.status === 202) { // Pending
-        setStatus('pending');
-        // Continue polling
-        pollTimerId.current = window.setTimeout(verifyPurchase, POLLING_INTERVAL);
+    let attempts = 0;
+
+    const verifyPurchase = async () => {
+      if (attempts >= MAX_ATTEMPTS) {
+        setStatus('error');
+        setError('Verification timed out. Please check your wallet for transaction status and contact support if payment was sent.');
+        localStorage.removeItem('coinbase_charge_code');
         return;
       }
       
-      if (response.ok) { // Success
-         const data = await response.json();
-         setDownloadUrl(data.url);
-         if(data.trackName) setTrackName(data.trackName);
-         setStatus('success');
-         localStorage.removeItem('coinbase_charge_code');
-         return; // Stop polling
-      }
+      attempts++;
 
-      // Handle non-ok responses (4xx, 5xx)
-      let errorMessage = 'An error occurred during verification.';
-      const contentType = response.headers.get('content-type');
-
-      if (contentType && contentType.includes('application/json')) {
-        const errorData = await response.json().catch(() => ({ error: 'Could not parse error response.' }));
-        errorMessage = errorData.error || `Server responded with status: ${response.status}`;
-      } else {
-        const errorText = await response.text();
-        console.error("Server returned a non-JSON error response:", errorText.substring(0, 500));
-        errorMessage = `Could not verify purchase. The server returned an unexpected response. Please try again later or contact support. (Status: ${response.status})`;
-      }
-      throw new Error(errorMessage);
-      
-    } catch (err) {
-      setStatus('error');
-      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
-      localStorage.removeItem('coinbase_charge_code');
-    }
-  }, []); // Empty dependency array means this function is created only once.
-
-
-  useEffect(() => {
-    verifyPurchase();
-
-    // This cleanup function is crucial for stopping polling if the user navigates away.
-    return () => {
-        if (pollTimerId.current) {
-            clearTimeout(pollTimerId.current);
+      try {
+        const response = await fetch('/get-download-link', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ chargeCode }),
+        });
+        
+        // Handle non-successful responses first
+        if (!response.ok && response.status !== 202) {
+            let errorMessage = `Could not verify purchase. The server returned an unexpected response. Please try again later or contact support. (Status: ${response.status})`;
+            try {
+                // Try to parse a JSON error response from the server
+                const errorData = await response.json();
+                if (errorData.error) {
+                    errorMessage = errorData.error;
+                }
+            } catch (e) {
+                // The response was not JSON, so we use the generic error.
+                console.error("Could not parse error response as JSON.");
+            }
+            throw new Error(errorMessage);
         }
+
+        const data = await response.json();
+
+        if (response.status === 202) { // Pending
+          setStatus('pending');
+          // continue polling
+          setTimeout(verifyPurchase, POLLING_INTERVAL);
+        } else if (response.ok) { // Success
+           setDownloadUrl(data.url);
+           if(data.trackName) setTrackName(data.trackName);
+           setStatus('success');
+           localStorage.removeItem('coinbase_charge_code');
+        } else {
+          // This case is a fallback, should be caught by the !response.ok check above
+          throw new Error(data.error || 'Failed to verify purchase.');
+        }
+      } catch (err) {
+        setStatus('error');
+        setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+        localStorage.removeItem('coinbase_charge_code');
+      }
     };
-  }, [verifyPurchase]); // Effect depends on our stable verifyPurchase function.
+
+    verifyPurchase();
+  }, []);
 
   const renderContent = () => {
     switch (status) {
@@ -157,3 +143,4 @@ export const SuccessPage: React.FC = () => {
     </main>
   );
 };
+

@@ -15,6 +15,7 @@ export const TRACKS: Track[] = [
     audioSrc: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/1_Orion.mp3',
     price: 0.01, // Price lowered for testing
     priceId: 'coinbase-charge', 
+    fileName: '1_Orion.mp3',
   },
   {
     id: 'cosmosonic-02',
@@ -24,6 +25,7 @@ export const TRACKS: Track[] = [
     audioSrc: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/2_Moon.mp3',
     price: 0.99,
     priceId: 'coinbase-charge',
+    fileName: '2_Moon.mp3',
   },
   {
     id: 'cosmosonic-03',
@@ -33,6 +35,7 @@ export const TRACKS: Track[] = [
     audioSrc: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/3_Earth.mp3',
     price: 0.99,
     priceId: 'coinbase-charge',
+    fileName: '3_Earth.mp3',
   },
   {
     id: 'cosmosonic-04',
@@ -42,6 +45,7 @@ export const TRACKS: Track[] = [
     audioSrc: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/4_Orion_II.mp3',
     price: 0.99,
     priceId: 'coinbase-charge',
+    fileName: '4_Orion_II.mp3',
   },
 ];
 
@@ -51,3 +55,4 @@ export const SOCIAL_LINKS: SocialLink[] = [
   { name: 'X', url: '#', icon: <XIcon /> },
   { name: 'YouTube', url: '#', icon: <YoutubeIcon /> },
 ];
+
