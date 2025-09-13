@@ -46,14 +46,19 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
       return new Response(JSON.stringify({ error: envError }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
   
+  // Sanitize the R2 endpoint to remove any bucket name path from the URL.
+  // This prevents creating a URL like `endpoint/bucket/bucket/key`.
+  const endpointUrl = new URL(env.R2_ENDPOINT);
+  const sanitizedEndpoint = `${endpointUrl.protocol}//${endpointUrl.host}`;
+
   const s3 = new S3Client({
       region: 'auto',
-      endpoint: env.R2_ENDPOINT,
+      endpoint: sanitizedEndpoint, // Use the sanitized endpoint
       credentials: {
         accessKeyId: env.R2_ACCESS_KEY_ID,
         secretAccessKey: env.R2_SECRET_ACCESS_KEY,
       },
-      forcePathStyle: true, // Forces path-style URLs, e.g., endpoint/bucket/key
+      forcePathStyle: true, // Crucial for S3-compatible services
   });
 
   try {
