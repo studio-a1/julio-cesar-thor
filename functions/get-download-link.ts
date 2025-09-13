@@ -95,7 +95,7 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
     
     if (lastStatus === 'COMPLETED') {
         const trackName = charge.metadata?.trackName;
-        const fileName = charge.metadata?.fileName; // Get the exact filename from metadata
+        const fileName = charge.metadata?.track_filename; // Get the exact filename from metadata using the new key
 
         if (!fileName) {
             return new Response(JSON.stringify({ error: 'Purchase verified, but could not determine which file to download.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
@@ -126,4 +126,3 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
     });
   }
 };
-

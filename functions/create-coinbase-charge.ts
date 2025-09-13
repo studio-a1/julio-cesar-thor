@@ -25,9 +25,9 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
   }
 
   try {
-    const { trackName, trackId, price } = await request.json() as { trackName: string; trackId: string; price: string; };
+    const { trackName, trackId, price, track_filename } = await request.json() as { trackName: string; trackId: string; price: string; track_filename: string; };
 
-    if (!trackName || !trackId || !price) {
+    if (!trackName || !trackId || !price || !track_filename) {
       return new Response(JSON.stringify({ error: 'Missing required parameters.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -45,6 +45,7 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
       metadata: {
         trackId: trackId,
         trackName: trackName,
+        track_filename: track_filename, // Store the exact filename in metadata with the new key
       },
       redirect_url: `${env.APP_URL}/success`,
     };
