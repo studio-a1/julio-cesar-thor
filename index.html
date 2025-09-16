@@ -11,6 +11,17 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .animate-spin-slow {
+        animation: spin 10s linear infinite;
+      }
     </style>
   <script type="importmap">
 {
@@ -30,6 +41,9 @@
 </head>
   <body class="bg-black">
     <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
