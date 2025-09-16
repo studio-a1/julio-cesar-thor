@@ -117,10 +117,9 @@ export default function App(): React.ReactElement {
           muted
           playsInline
           className="w-full h-full object-cover"
-          poster="https://picsum.photos/1920/1080?blur=5"
+          poster="https://images.pexels.com/photos/1169754/pexels-photo-1169754.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080"
         >
-          {/* Using a placeholder video */}
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-liquid-flowing-in-a-slow-motion-44129-large.mp4" type="video/mp4" />
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-space-nebula-42353-large.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-black/60"></div>
