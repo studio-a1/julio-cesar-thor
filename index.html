@@ -16,10 +16,10 @@
       /* Place your Nakara font files in the `public/fonts` directory */
       @font-face {
         font-family: 'Nakara';
-        /* The browser will try to load the best format first. */
-        src: url('/fonts/Nakara.woff2') format('woff2'),
-             url('/fonts/Nakara.woff') format('woff'),
-             url('/fonts/Nakara.ttf') format('truetype');
+        /* The browser will try to load the best format first. Using relative paths for robustness. */
+        src: url('./fonts/Nakara.woff2') format('woff2'),
+             url('./fonts/Nakara.woff') format('woff'),
+             url('./fonts/Nakara.ttf') format('truetype');
         font-weight: normal;
         font-style: normal;
         font-display: swap; /* Ensures text is visible while font loads */
