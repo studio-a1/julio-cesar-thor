@@ -52,8 +52,7 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
   }, [onPause, track.id]);
 
   const togglePlay = () => {
-    if (!track.audioSrc) return;
-    if (isLoading && waveform.length === 0) return;
+    if (!track.audioSrc || !audioBufferRef.current) return;
 
     if (isPlaying) {
       onPause(track.id);
@@ -122,6 +121,44 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
         ctx.restore();
     }
   }, [waveform]);
+  
+  // Effect to pre-load audio data and generate waveform on mount
+  useEffect(() => {
+    if (!track.audioSrc) return;
+
+    const loadAudioData = async () => {
+      // Don't re-fetch if we already have the data
+      if (audioBufferRef.current) {
+        drawWaveform(); // Re-draw in case canvas wasn't ready
+        return;
+      }
+      setIsLoading(true);
+      try {
+        audioContextRef.current = audioContextRef.current ?? new (window.AudioContext || (window as any).webkitAudioContext)();
+        const audioContext = audioContextRef.current;
+        
+        const response = await fetch(track.audioSrc);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        if (arrayBuffer.byteLength === 0) {
+            throw new Error("Received empty audio file.");
+        }
+        const buffer = await audioContext.decodeAudioData(arrayBuffer);
+        audioBufferRef.current = buffer;
+        const data = generateWaveformData(buffer, 200);
+        setWaveform(data);
+      } catch (error) {
+        console.error(`Error processing audio file for track '${track.title}':`, error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadAudioData();
+    // This effect should only run when the track source changes.
+  }, [track.audioSrc, track.title, drawWaveform]);
 
   useEffect(() => {
       drawWaveform();
@@ -132,38 +169,11 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
 
   useEffect(() => {
     const playAudio = async () => {
-      if (!track.audioSrc) return;
+      if (!track.audioSrc || !audioBufferRef.current || !audioContextRef.current) return stableOnPause();
 
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      }
-      if (audioContextRef.current.state === 'suspended') await audioContextRef.current.resume();
       const audioContext = audioContextRef.current;
-
-      if (!audioBufferRef.current) {
-        setIsLoading(true);
-        try {
-          const response = await fetch(track.audioSrc);
-          if (!response.ok) {
-              throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`);
-          }
-          const arrayBuffer = await response.arrayBuffer();
-           if (arrayBuffer.byteLength === 0) {
-              throw new Error("Received empty audio file.");
-          }
-          const buffer = await audioContext.decodeAudioData(arrayBuffer);
-          audioBufferRef.current = buffer;
-          const data = generateWaveformData(buffer, 200);
-          setWaveform(data);
-        } catch (error) {
-          console.error('Error processing audio file:', error);
-          stableOnPause();
-        } finally {
-          setIsLoading(false);
-        }
-      }
-
-      if (!audioBufferRef.current) return stableOnPause();
+      if (audioContext.state === 'suspended') await audioContext.resume();
+      
       if (sourceNodeRef.current) { try { sourceNodeRef.current.stop(); } catch (e) {} }
 
       const source = audioContext.createBufferSource();
@@ -210,13 +220,24 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
 
     const animationLoop = () => {
         const audioContext = audioContextRef.current;
-        if (!audioContext || audioContext.state !== 'running') return;
-        const elapsedTime = audioContext.currentTime - playbackStartTimeRef.current;
-        const progress = Math.min(elapsedTime / PREVIEW_DURATION, 1);
-        drawWaveform(progress);
-        if (progress < 1) animationFrameRef.current = requestAnimationFrame(animationLoop);
+        
+        // If the audio context is running, calculate and draw progress.
+        if (audioContext && audioContext.state === 'running') {
+            const elapsedTime = audioContext.currentTime - playbackStartTimeRef.current;
+            const progress = Math.min(elapsedTime / PREVIEW_DURATION, 1);
+            drawWaveform(progress);
+            if (progress < 1) {
+                animationFrameRef.current = requestAnimationFrame(animationLoop);
+            }
+        } else {
+            // If context isn't running yet (e.g., on first play), keep polling
+            // on the next frame until it's ready. The other effect will resume it.
+            animationFrameRef.current = requestAnimationFrame(animationLoop);
+        }
     };
+
     animationFrameRef.current = requestAnimationFrame(animationLoop);
+    
     return () => {
         if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
@@ -230,10 +251,30 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
     };
   }, []);
 
+  const showLoader = isLoading && waveform.length === 0;
+  const showPlayPause = track.audioSrc && !showLoader;
+
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-black/20 rounded-lg hover:bg-black/40 transition-all duration-300 gap-4">
-        <div className="flex items-center gap-4 w-auto">
-            <img src={track.coverArt} alt={track.title} className="w-16 h-16 rounded-md object-cover flex-shrink-0" />
+    <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-black/20 rounded-lg hover:bg-black/40 transition-all duration-300 gap-4 group">
+        <div className="flex items-center gap-4">
+          <div className="relative flex-shrink-0 w-20 h-20">
+            <img 
+              src={track.coverArt} 
+              alt={track.title} 
+              className={`w-full h-full rounded-full object-cover transition-all duration-300 ${isPlaying ? 'animate-spin-slow' : ''}`}
+            />
+            {track.audioSrc && (
+              <button
+                onClick={togglePlay}
+                disabled={showLoader}
+                className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 disabled:opacity-50 disabled:cursor-wait"
+                aria-label={isPlaying ? `Pause preview for ${track.title}` : `Play preview for ${track.title}`}
+              >
+                {showLoader && <SpinnerIcon className="w-6 h-6 text-white" />}
+                {showPlayPause && (isPlaying ? <PauseIcon /> : <PlayIcon />)}
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col justify-center flex-grow w-full px-0 sm:px-2">
@@ -243,15 +284,11 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
             </div>
             {track.audioSrc && (
                  <div 
-                    className="relative w-full h-10 mt-2 group cursor-pointer" 
-                    onClick={togglePlay}
-                    aria-label={`Play or pause preview for ${track.title}`}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && togglePlay()}
+                    className="relative w-full h-10 mt-2" 
+                    aria-label={`Waveform for ${track.title}`}
                   >
                     <canvas ref={canvasRef} className="w-full h-full" />
-                    {(isLoading && !waveform.length) && (
+                    {showLoader && (
                         <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400 bg-black/20 rounded">Loading preview...</div>
                     )}
                 </div>
@@ -259,23 +296,6 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
         </div>
       
         <div className="flex items-center gap-4 sm:gap-6 w-full sm:w-auto justify-end mt-2 sm:mt-0">
-            {track.audioSrc && (
-                <button
-                  onClick={togglePlay}
-                  disabled={isLoading && waveform.length === 0}
-                  className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-wait"
-                  aria-label={isPlaying ? `Pause preview for ${track.title}` : `Play preview for ${track.title}`}
-                >
-                  {isLoading && waveform.length === 0 ? (
-                    <SpinnerIcon className="w-5 h-5 text-white" />
-                  ) : isPlaying ? (
-                    <PauseIcon />
-                  ) : (
-                    <PlayIcon />
-                  )}
-                </button>
-            )}
-            
             <button
               onClick={() => onBuyClick(track)}
               className="flex-grow sm:flex-grow-0 px-6 py-2 bg-gradient-to-r from-orange-500 to-black rounded-full font-semibold hover:opacity-90 transition-opacity duration-300"
