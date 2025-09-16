@@ -51,6 +51,5 @@ export const TRACKS: Track[] = [
 
 export const SOCIAL_LINKS: SocialLink[] = [
   { name: 'Instagram', url: 'https://www.instagram.com/juliocesarthor', icon: <InstagramIcon /> },
-  { name: 'Facebook', url: 'https://www.facebook.com/juliocesarthor/', icon: <FacebookIcon /> },
-  { name: 'YouTube', url: 'https://www.youtube.com/@juliocesarthor3785', icon: <YoutubeIcon /> },
+   { name: 'YouTube', url: 'https://www.youtube.com/@juliocesarthor3785', icon: <YoutubeIcon /> },
 ];
