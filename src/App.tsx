@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { SocialLinks } from './components/SocialLinks';
 import { MusicTrack } from './components/MusicTrack';
 import { PurchaseModal } from './components/PurchaseModal';
-import { TRACKS, SOCIAL_LINKS } from './constants';
+import { TRACKS, SOCIAL_LINKS, BACKGROUND_IMAGES } from './constants';
 import type { Track } from './types';
 import { SuccessPage } from './SuccessPage';
 
@@ -106,22 +106,26 @@ const MainContent = () => {
 export default function App(): React.ReactElement {
   // Use a regex to robustly check for the success path, handling issues like '//success'
   const isSuccessPage = /^\/*success/.test(window.location.pathname);
+  const [bgImage, setBgImage] = useState<string>('');
+
+  useEffect(() => {
+    // Select a random background image on mount
+    const randomImage = BACKGROUND_IMAGES[Math.floor(Math.random() * BACKGROUND_IMAGES.length)];
+    setBgImage(randomImage);
+  }, []);
 
   return (
     <div className="relative min-h-screen w-full font-sans text-white overflow-x-hidden">
-      {/* Background Video */}
+      {/* Background Image */}
       <div className="absolute top-0 left-0 w-full h-full -z-10">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-          poster="https://images.pexels.com/photos/1169754/pexels-photo-1169754.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080"
-        >
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-space-nebula-42353-large.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        {bgImage && (
+          <img
+            src={bgImage}
+            alt="Cosmic background"
+            className="w-full h-full object-cover animate-kenburns"
+            key={bgImage}
+          />
+        )}
         <div className="absolute top-0 left-0 w-full h-full bg-black/60"></div>
       </div>
       
