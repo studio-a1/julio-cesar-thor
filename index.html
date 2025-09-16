@@ -22,6 +22,23 @@
       .animate-spin-slow {
         animation: spin 10s linear infinite;
       }
+      @keyframes kenburns {
+        0% {
+          transform: scale(1.05) translate(0, 0);
+          opacity: 0.85;
+        }
+        50% {
+          transform: scale(1.15) translate(-1%, 1%);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1.05) translate(0, 0);
+          opacity: 0.85;
+        }
+      }
+      .animate-kenburns {
+        animation: kenburns 45s ease-in-out infinite;
+      }
     </style>
   <script type="importmap">
 {
@@ -41,9 +58,6 @@
 </head>
   <body class="bg-black">
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
