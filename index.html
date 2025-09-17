@@ -14,19 +14,32 @@
       
       /* --- Custom Font Definition --- */
       /* Place your Nakara font files in the `public/fonts` directory */
+      
+      /* Defines the 'Nakara Regular' font */
       @font-face {
         font-family: 'Nakara';
-        /* The browser will try to load the best format first. Using relative paths for robustness. */
-        src: url('./fonts/Nakara.woff2') format('woff2'),
-             url('./fonts/Nakara.woff') format('woff'),
-             url('./fonts/Nakara.ttf') format('truetype');
+        src: url('/fonts/Nakara Regular.woff2') format('woff2'),
+             url('/fonts/Nakara Regular.woff') format('woff'),
+             url('/fonts/Nakara Regular.ttf') format('truetype');
         font-weight: normal;
         font-style: normal;
-        font-display: swap; /* Ensures text is visible while font loads */
+        font-display: swap;
+      }
+      
+      /* Defines the 'Nakara Outline' font */
+      @font-face {
+        font-family: 'Nakara Outline';
+        src: url('/fonts/Nakara Outline.woff2') format('woff2'),
+             url('/fonts/Nakara Outline.woff') format('woff'),
+             url('/fonts/Nakara Outline.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
       }
 
+      /* Utility class to apply the font. Using 'Nakara Outline' for headings. */
       .font-nakara {
-        font-family: 'Nakara', sans-serif;
+        font-family: 'Nakara Outline', 'Nakara', sans-serif; /* Fallback to Regular, then sans-serif */
       }
       /* --- End Custom Font Definition --- */
 
