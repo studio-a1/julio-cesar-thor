@@ -40,7 +40,7 @@ const MainContent = () => {
       <main className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 sm:p-8">
         <div className="w-full max-w-4xl mx-auto">
           <header className="text-center mb-12">
-            <h1 className="text-5xl sm:text-7xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-gray-900">
+            <h1 className="font-nakara-outline text-5xl sm:text-7xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-gray-900">
               Julio César THOR
             </h1>
             <p className="mt-4 text-lg text-gray-300">
@@ -52,7 +52,7 @@ const MainContent = () => {
           </header>
 
           <section className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8">
-            <h2 className="text-3xl font-bold mb-6 text-center sm:text-left">Cosmosonic</h2>
+            <h2 className="font-nakara-rough text-3xl font-bold mb-6 text-center sm:text-left">Cosmosonic</h2>
             <div className="space-y-6">
               {TRACKS.map(track => (
                 <MusicTrack
