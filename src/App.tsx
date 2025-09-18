@@ -35,55 +35,6 @@ const MainContent = () => {
     setSelectedTrack(null);
   };
 
-  const handleDownloadManual = async (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    const link = event.currentTarget;
-    const pdfUrl = link.href;
-    const fileName = link.download;
-    const span = link.querySelector('span');
-    const originalText = span ? span.textContent : '';
-
-    if (span) {
-      span.textContent = 'Downloading...';
-      link.style.pointerEvents = 'none'; // Disable link during download
-    }
-
-    try {
-      const response = await fetch(pdfUrl);
-
-      // A common SPA issue is the server returning index.html for any unknown path.
-      // We check the content-type to ensure we're not downloading the HTML shell.
-      const contentType = response.headers.get('Content-Type');
-      if (!response.ok || (contentType && contentType.includes('text/html'))) {
-        throw new Error('Failed to retrieve the PDF file. The server may have returned an incorrect document.');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      
-      const tempLink = document.createElement('a');
-      tempLink.style.display = 'none';
-      tempLink.href = url;
-      tempLink.setAttribute('download', fileName);
-      
-      document.body.appendChild(tempLink);
-      tempLink.click();
-
-      // Cleanup
-      document.body.removeChild(tempLink);
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-      const userFriendlyError = `An error occurred while trying to download the file.\n\nThis can happen if the file is not in the correct location or if the filename is misspelled. Please double-check that the file "Manual_Compra_Crypto.pdf" exists inside the "public/media" folder. Note that filenames can be case-sensitive.`;
-      alert(userFriendlyError);
-    } finally {
-      if (span) {
-        span.textContent = originalText;
-        link.style.pointerEvents = 'auto';
-      }
-    }
-  };
-
   return (
     <>
       {/* Main Content */}
@@ -122,16 +73,16 @@ const MainContent = () => {
             <p className="text-gray-300 mb-8 text-center max-w-xl mx-auto">
               Visual art from the 2017 original release and the new relaunch.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <img
-                src="/media/cosmosonic_art1.png"
-                alt="Cosmosonic Relaunch Artwork 1"
-                className="rounded-lg w-full h-auto object-cover border-2 border-white/10 shadow-lg"
-              />
+            <div className="flex flex-col items-center gap-6">
               <img
                 src="/media/cosmosonic_art2.png"
                 alt="Cosmosonic Relaunch Artwork 2"
-                className="rounded-lg w-full h-auto object-cover border-2 border-white/10 shadow-lg"
+                className="rounded-lg w-full max-w-lg h-auto object-cover border-2 border-white/10 shadow-lg"
+              />
+              <img
+                src="/media/cosmosonic_art1.png"
+                alt="Cosmosonic Relaunch Artwork 1"
+                className="rounded-lg w-full max-w-lg h-auto object-cover border-2 border-white/10 shadow-lg"
               />
             </div>
           </section>
@@ -162,9 +113,8 @@ const MainContent = () => {
 
           <section className="mt-12 text-center">
             <a
-              href="/media/Manual_Compra_Crypto.pdf"
-              download="Manual_Compra_Crypto.pdf"
-              onClick={handleDownloadManual}
+              href="/media/manual_compra_crypto.pdf"
+              download="manual_compra_crypto.pdf"
               className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-300 group"
             >
               <DownloadIcon />
