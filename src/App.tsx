@@ -74,7 +74,8 @@ const MainContent = () => {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
-      alert('An error occurred while trying to download the file. Please try again later.');
+      const userFriendlyError = `An error occurred while trying to download the file.\n\nThis can happen if the file is not in the correct location or if the filename is misspelled. Please double-check that the file "Manual_Compra_Crypto.pdf" exists inside the "public/media" folder. Note that filenames can be case-sensitive.`;
+      alert(userFriendlyError);
     } finally {
       if (span) {
         span.textContent = originalText;
