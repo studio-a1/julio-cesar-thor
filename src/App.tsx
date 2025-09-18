@@ -167,3 +167,4 @@ export default function App(): React.ReactElement {
       {isSuccessPage ? <SuccessPage /> : <MainContent />}
     </div>
   );
+  }
