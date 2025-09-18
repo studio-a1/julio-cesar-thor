@@ -114,7 +114,7 @@ const MainContent = () => {
           <section className="mt-12 text-center">
             <a
               href="/media/Manual_Compra_Crypto.pdf"
-              download
+              download="Manual_Compra_Crypto.pdf"
               className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-300 group"
             >
               <DownloadIcon />
