@@ -7,53 +7,30 @@
     <title>Crypto Music Artist</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      @font-face {
+        font-family: 'Nakara Outline';
+        src: url('/fonts/Nakara-Outline.woff2') format('woff2'),
+             url('/fonts/Nakara-Outline.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Nakara Rough';
+        src: url('/fonts/Nakara-Rough.woff2') format('woff2'),
+             url('/fonts/Nakara-Rough.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+      }
+      .font-nakara-outline {
+        font-family: 'Nakara Outline', sans-serif;
+      }
+      .font-nakara-rough {
+        font-family: 'Nakara Rough', sans-serif;
+      }
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
-      
-      /* --- Custom Font Definition --- */
-      /* NOTE: Ensure your font files in `public/fonts` are renamed to use hyphens (e.g., Nakara-Regular.woff2) */
-      
-      /* Defines the 'Nakara Regular' font */
-      @font-face {
-        font-family: 'Nakara-Regular';
-        src: url('/fonts/Nakara-Regular.woff2') format('woff2'),
-             url('/fonts/Nakara-Regular.woff') format('woff'),
-             url('/fonts/Nakara-Regular.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-      }
-      
-      /* Defines the 'Nakara' font */
-      @font-face {
-        font-family: 'Nakara-Outline';
-        src: url('/fonts/Nakara-Outline.woff2') format('woff2'),
-             url('/fonts/Nakara-Outline.woff') format('woff'),
-             url('/fonts/Nakara-Outline.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-      }
-       /* Defines the 'Nakara' font */
-      @font-face {
-        font-family: 'Nakara-Rough';
-        src: url('/fonts/Nakara-Rough.woff2') format('woff2'),
-             url('/fonts/Nakara-Rough.woff') format('woff'),
-             url('/fonts/Nakara-Rough.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-      }
-
-
-      /* Utility class to apply the font. Using 'Nakara Outline' for headings. */
-      .font-nakara {
-        font-family: 'Nakara-Outline', 'Nakara-Regular', 'Nakara-Rough'; /* Correct fallback chain */
-      }
-      /* --- End Custom Font Definition --- */
-
       @keyframes spin {
         from {
           transform: rotate(0deg);
