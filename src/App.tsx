@@ -35,6 +35,54 @@ const MainContent = () => {
     setSelectedTrack(null);
   };
 
+  const handleDownloadManual = async (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const link = event.currentTarget;
+    const pdfUrl = link.href;
+    const fileName = link.download;
+    const span = link.querySelector('span');
+    const originalText = span ? span.textContent : '';
+
+    if (span) {
+      span.textContent = 'Downloading...';
+      link.style.pointerEvents = 'none'; // Disable link during download
+    }
+
+    try {
+      const response = await fetch(pdfUrl);
+
+      // A common SPA issue is the server returning index.html for any unknown path.
+      // We check the content-type to ensure we're not downloading the HTML shell.
+      const contentType = response.headers.get('Content-Type');
+      if (!response.ok || (contentType && contentType.includes('text/html'))) {
+        throw new Error('Failed to retrieve the PDF file. The server may have returned an incorrect document.');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      
+      const tempLink = document.createElement('a');
+      tempLink.style.display = 'none';
+      tempLink.href = url;
+      tempLink.setAttribute('download', fileName);
+      
+      document.body.appendChild(tempLink);
+      tempLink.click();
+
+      // Cleanup
+      document.body.removeChild(tempLink);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while trying to download the file. Please try again later.');
+    } finally {
+      if (span) {
+        span.textContent = originalText;
+        link.style.pointerEvents = 'auto';
+      }
+    }
+  };
+
   return (
     <>
       {/* Main Content */}
@@ -115,6 +163,7 @@ const MainContent = () => {
             <a
               href="/media/Manual_Compra_Crypto.pdf"
               download="Manual_Compra_Crypto.pdf"
+              onClick={handleDownloadManual}
               className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-300 group"
             >
               <DownloadIcon />
@@ -167,4 +216,4 @@ export default function App(): React.ReactElement {
       {isSuccessPage ? <SuccessPage /> : <MainContent />}
     </div>
   );
-  }
+}
