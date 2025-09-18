@@ -5,6 +5,7 @@ import { PurchaseModal } from './components/PurchaseModal';
 import { TRACKS, SOCIAL_LINKS, BACKGROUND_IMAGES } from './constants';
 import type { Track } from './types';
 import { SuccessPage } from './SuccessPage';
+import { DownloadIcon } from './components/Icons';
 
 const openseaURL = 'https://opensea.io/collection/cosmosonic';
 const qrCodeAPIURL = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(openseaURL)}`;
@@ -67,6 +68,25 @@ const MainContent = () => {
             </div>
           </section>
 
+          <section className="mt-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8">
+            <h2 className="text-3xl font-bold mb-6 text-center">The Art of Cosmosonic</h2>
+            <p className="text-gray-300 mb-8 text-center max-w-xl mx-auto">
+              Visual art from the 2017 original release and the new relaunch.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <img
+                src="/media/cosmosonic_art1.png"
+                alt="Cosmosonic Relaunch Artwork 1"
+                className="rounded-lg w-full h-auto object-cover border-2 border-white/10 shadow-lg"
+              />
+              <img
+                src="/media/cosmosonic_art2.png"
+                alt="Cosmosonic Relaunch Artwork 2"
+                className="rounded-lg w-full h-auto object-cover border-2 border-white/10 shadow-lg"
+              />
+            </div>
+          </section>
+
           <section className="mt-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 text-center">
             <h2 className="text-3xl font-bold mb-4">NFT Collection</h2>
             <p className="text-gray-300 mb-6 max-w-xl mx-auto">
@@ -90,6 +110,21 @@ const MainContent = () => {
               </a>
             </div>
           </section>
+
+          <section className="mt-12 text-center">
+            <a
+              href="/media/Manual_Compra_Crypto.pdf"
+              download
+              className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-300 group"
+            >
+              <DownloadIcon />
+              <span>Download Crypto Purchase Guide</span>
+            </a>
+          </section>
+
+          <footer className="mt-16 text-center text-gray-500 text-sm pb-8">
+            <p>&copy; {new Date().getFullYear()} Julio César THOR. All rights reserved.</p>
+          </footer>
         </div>
       </main>
 
@@ -132,4 +167,3 @@ export default function App(): React.ReactElement {
       {isSuccessPage ? <SuccessPage /> : <MainContent />}
     </div>
   );
-}
