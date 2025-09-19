@@ -45,7 +45,7 @@ const MainContent = () => {
               Julio César THOR
             </h1>
             <p className="mt-4 text-lg text-gray-300">
-              Explorando as fronteiras do som e da cripto.
+              Explorando as fronteiras do som e das criptos.
             </p>
             <div className="mt-8">
               <SocialLinks links={SOCIAL_LINKS} />
