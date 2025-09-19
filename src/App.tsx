@@ -112,9 +112,19 @@ const MainContent = () => {
           </section>
 
           <section className="mt-12 text-center">
+            {/* 
+              NOTE: The link below points to a placeholder PDF because the original file was not found by the server.
+              When a file is not found in a Single Page Application, the server often returns index.html,
+              which is why you were downloading an HTML file instead of a PDF.
+              
+              TO FIX THIS:
+              1. Place your `Manual_Compra_Crypto.pdf` file inside the `/public/media/` directory.
+              2. Change the href below back to: "/media/Manual_Compra_Crypto.pdf"
+            */}
             <a
-              href="/media/manual_compra_crypto.pdf"
-              download="manual_compra_crypto.pdf"
+              href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-300 group"
             >
               <DownloadIcon />
