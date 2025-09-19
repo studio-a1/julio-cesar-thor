@@ -158,7 +158,7 @@ export default function App(): React.ReactElement {
           <img
             src={bgImage}
             alt="Cosmic background"
-            className="w-full h-full object-cover animate-kenburns"
+            className="w-full h-full object-cover animate-fade-in"
             key={bgImage}
           />
         )}
