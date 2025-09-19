@@ -3,7 +3,6 @@
 
 interface Env {
   COINBASE_COMMERCE_API_KEY: string;
-  APP_URL: string;
 }
 
 const COINBASE_API_URL = 'https://api.commerce.coinbase.com/charges';
@@ -15,8 +14,8 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
     return new Response('Method Not Allowed', { status: 405 });
   }
 
-  if (!env.COINBASE_COMMERCE_API_KEY || !env.APP_URL) {
-    const errorMessage = 'Server configuration error: Missing required environment variables.';
+  if (!env.COINBASE_COMMERCE_API_KEY) {
+    const errorMessage = 'Server configuration error: Missing COINBASE_COMMERCE_API_KEY environment variable.';
     console.error(errorMessage);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
@@ -34,6 +33,9 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
       });
     }
 
+    // Dynamically determine the origin from the request URL to build the redirect URL.
+    const origin = new URL(request.url).origin;
+
     const chargeData = {
       name: trackName,
       description: `Purchase of the track: ${trackName}`,
@@ -47,7 +49,7 @@ export const onRequest: (context: { request: Request; env: Env }) => Promise<Res
         trackName: trackName,
         track_filename: track_filename, // Store the exact filename in metadata with the new key
       },
-      redirect_url: `${env.APP_URL}/success`,
+      redirect_url: `${origin}/success`,
     };
     
     const response = await fetch(COINBASE_API_URL, {
