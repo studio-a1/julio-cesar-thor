@@ -125,6 +125,17 @@ const MainContent = () => {
 
           <footer className="mt-16 text-center text-gray-500 text-sm pb-8">
             <p>&copy; {new Date().getFullYear()} Julio César THOR. All rights reserved.</p>
+            <p className="mt-2">
+              Developed by{' '}
+              <a
+                href="https://www.instagram.com/studioa1.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors duration-300"
+              >
+                @studioa1.dev
+              </a>
+            </p>
           </footer>
         </div>
       </main>
