@@ -261,7 +261,7 @@ export const MusicTrack: React.FC<MusicTrackProps> = ({ track, onBuyClick, isPla
             <img 
               src={track.coverArt} 
               alt={track.title} 
-              className={`w-full h-full rounded-full object-cover transition-all duration-300 ${isPlaying ? 'animate-spin-slow' : ''}`}
+              className="w-full h-full rounded-full object-cover transition-all duration-300"
             />
             {track.audioSrc && (
               <button

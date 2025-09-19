@@ -7,7 +7,7 @@ import type { Track } from './types';
 import { SuccessPage } from './SuccessPage';
 import { DownloadIcon } from './components/Icons';
 
-const openseaURL = 'https://opensea.io/collection/cosmosonic';
+const openseaURL = 'https://opensea.io/collection/ontology-bit';
 const qrCodeAPIURL = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(openseaURL)}`;
 
 const MainContent = () => {
