@@ -45,7 +45,7 @@ const MainContent = () => {
               Julio César THOR
             </h1>
             <p className="mt-4 text-lg text-gray-300">
-              Exploring the frontiers of sound and crypto.
+              Explorando as fronteiras do som e da cripto.
             </p>
             <div className="mt-8">
               <SocialLinks links={SOCIAL_LINKS} />
@@ -69,34 +69,34 @@ const MainContent = () => {
           </section>
 
           <section className="mt-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8">
-            <h2 className="text-3xl font-bold mb-6 text-center">The Art of Cosmosonic</h2>
+            <h2 className="text-3xl font-bold mb-6 text-center">A Arte de Cosmosonic</h2>
             <p className="text-gray-300 mb-8 text-center max-w-xl mx-auto">
-              Visual art from the 2017 original release and the new relaunch.
+              Artes visuais do lançamento original de 2017 e do novo relançamento.
             </p>
             <div className="flex flex-col items-center gap-6">
               <img
                 src="/media/cosmosonic_art2.png"
-                alt="Cosmosonic Relaunch Artwork 2"
+                alt="Arte visual do relançamento do álbum Cosmosonic, mostrando uma figura cósmica em tons de laranja e roxo."
                 className="rounded-lg w-full max-w-lg h-auto object-cover border-2 border-white/10 shadow-lg"
               />
               <img
                 src="/media/cosmosonic_art1.png"
-                alt="Cosmosonic Relaunch Artwork 1"
+                alt="Arte visual original de 2017 do álbum Cosmosonic, com uma estética retrô e espacial."
                 className="rounded-lg w-full max-w-lg h-auto object-cover border-2 border-white/10 shadow-lg"
               />
             </div>
           </section>
 
           <section className="mt-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 text-center">
-            <h2 className="text-3xl font-bold mb-4">NFT Collection</h2>
+            <h2 className="text-3xl font-bold mb-4">Coleção NFT</h2>
             <p className="text-gray-300 mb-6 max-w-xl mx-auto">
-              Own a piece of the Cosmosonic universe. Explore our exclusive digital collectibles on OpenSea.
+              Possua um pedaço do universo Cosmosonic. Explore nossos colecionáveis digitais exclusivos no OpenSea.
             </p>
             <div className="flex flex-col items-center gap-6">
               <div className="p-2 bg-white rounded-lg shadow-lg">
                 <img
                   src={qrCodeAPIURL}
-                  alt="QR Code for Cosmosonic NFT collection on OpenSea"
+                  alt="QR Code para a coleção de NFTs Cosmosonic no OpenSea"
                   className="w-40 h-40"
                 />
               </div>
@@ -106,7 +106,7 @@ const MainContent = () => {
                 rel="noopener noreferrer"
                 className="inline-block px-8 py-3 bg-gradient-to-r from-orange-500 to-black rounded-full font-semibold hover:opacity-90 transition-opacity duration-300"
               >
-                View on OpenSea
+                Ver no OpenSea
               </a>
             </div>
           </section>
@@ -119,14 +119,14 @@ const MainContent = () => {
               className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-300 group"
             >
               <DownloadIcon />
-              <span>Download Crypto Purchase Guide</span>
+              <span>Baixar Guia de Compra com Cripto</span>
             </a>
           </section>
 
           <footer className="mt-16 text-center text-gray-500 text-sm pb-8">
-            <p>&copy; {new Date().getFullYear()} Julio César THOR. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Julio César THOR. Todos os direitos reservados.</p>
             <p className="mt-2">
-              Developed by{' '}
+              Desenvolvido por{' '}
               <a
                 href="https://www.instagram.com/studioa1.dev"
                 target="_blank"
@@ -168,7 +168,7 @@ export default function App(): React.ReactElement {
         {bgImage && (
           <img
             src={bgImage}
-            alt="Cosmic background"
+            alt="Fundo cósmico abstrato"
             className="w-full h-full object-cover animate-fade-in"
             key={bgImage}
           />

@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crypto Music Artist</title>
+    <link rel="icon" type="image/png" href="/media/favicon.png" />
+
+    <!-- SEO Meta Tags Essenciais -->
+    <title>Julio César THOR - Cosmosonic | Música & Criptoarte</title>
+    <meta name="description" content="Explore 'Cosmosonic', o álbum de Julio César THOR. Ouça prévias, compre faixas com criptomoedas e mergulhe em um universo de arte sonora e digital." />
+    <meta name="keywords" content="Julio César THOR, Cosmosonic, música eletrônica, criptoarte, NFT, comprar música com crypto, artista musical" />
+    <link rel="canonical" href="https://www.julio-cesar-thor.com/" />
+
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.julio-cesar-thor.com/" />
+    <meta property="og:title" content="Julio César THOR - Cosmosonic | Música & Criptoarte" />
+    <meta property="og:description" content="Explore 'Cosmosonic', o álbum de Julio César THOR. Ouça prévias, compre faixas com criptomoedas e mergulhe em um universo de arte sonora e digital." />
+    <meta property="og:image" content="https://www.julio-cesar-thor.com/media/cosmosonic_art2.png" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://www.julio-cesar-thor.com/" />
+    <meta name="twitter:title" content="Julio César THOR - Cosmosonic | Música & Criptoarte" />
+    <meta name="twitter:description" content="Explore 'Cosmosonic', o álbum de Julio César THOR. Ouça prévias, compre faixas com criptomoedas e mergulhe em um universo de arte sonora e digital." />
+    <meta name="twitter:image" content="https://www.julio-cesar-thor.com/media/cosmosonic_art2.png" />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @font-face {
@@ -58,9 +78,83 @@
   }
 }
 </script>
+<!-- Structured Data (Schema.org) for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicGroup",
+  "name": "Julio César THOR",
+  "url": "https://www.julio-cesar-thor.com/",
+  "sameAs": [
+    "https://www.instagram.com/juliocesarthor",
+    "https://www.facebook.com/juliocesarthor/",
+    "https://www.youtube.com/@juliocesarthor3785"
+  ],
+  "album": {
+    "@type": "MusicAlbum",
+    "name": "Cosmosonic",
+    "byArtist": {
+      "@type": "MusicGroup",
+      "name": "Julio César THOR"
+    },
+    "image": "https://www.julio-cesar-thor.com/media/cosmosonic_art2.png",
+    "track": {
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "MusicRecording",
+            "name": "Orion",
+            "inAlbum": "Cosmosonic",
+            "duration": "PT30S"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "MusicRecording",
+            "name": "Moon",
+            "inAlbum": "Cosmosonic",
+            "duration": "PT30S"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "MusicRecording",
+            "name": "Earth",
+            "inAlbum": "Cosmosonic",
+            "duration": "PT30S"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "MusicRecording",
+            "name": "Orion II",
+            "inAlbum": "Cosmosonic",
+            "duration": "PT30S"
+          }
+        }
+      ]
+    }
+  }
+}
+</script>
 </head>
   <body class="bg-black">
     <div id="root"></div>
+    <noscript>
+      <div style="color: white; text-align: center; padding: 40px; font-family: sans-serif;">
+        <h1>Bem-vindo ao site de Julio César THOR</h1>
+        <p>Este site é uma experiência interativa e requer JavaScript para funcionar. Por favor, habilite o JavaScript em seu navegador.</p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
