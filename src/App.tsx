@@ -111,7 +111,7 @@ const MainContent = () => {
             </div>
           </section>
 
-          <section className="mt-12 text-center">
+          <section className="mt-12 text-center flex flex-col sm:flex-row justify-center items-center gap-6">
             <a
               href="/media/manual_compra_cripto.pdf"
               target="_blank"
@@ -119,7 +119,16 @@ const MainContent = () => {
               className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-300 group"
             >
               <DownloadIcon />
-              <span>Baixar Guia de Compra com Cripto</span>
+              <span>Baixar Guia de Compra (PT-BR)</span>
+            </a>
+            <a
+              href="/media/manual_compra_cripto_EN.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors duration-300 group"
+            >
+              <DownloadIcon />
+              <span>Download Purchase Guide (EN)</span>
             </a>
           </section>
 
