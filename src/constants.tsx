@@ -22,7 +22,7 @@ export const TRACKS: Track[] = [
     artist: 'Julio César THOR',
     coverArt: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/cosmosonic-01.png',
     audioSrc: 'https://pub-1e5d25b634314db58b1875cea93e83a7.r2.dev/1_Orion.mp3',
-    price: 0.01, // Price lowered for testing
+    price: 0.99, // Price lowered for testing
     priceId: 'coinbase-charge', 
     fileName: '1_Orion.mp3',
   },
